@@ -1,11 +1,14 @@
 <template>
   <h1>Hello</h1>
+  <button class="button is-primary">Button</button>
+  <List />
 </template>
 
-<style>
-h1 {
-  color: red;
-}
-</style>
+<script>
+import List from '@/components/List.vue';
 
-<script></script>
+export default {
+  components: { List },
+  setup() {},
+};
+</script>
