@@ -21,6 +21,7 @@ module.exports = (env, argv) => {
     output: {
       path: dist,
       filename: '[name].[contenthash].js',
+      publicPath: '/',
     },
 
     resolve: {
@@ -31,6 +32,11 @@ module.exports = (env, argv) => {
     mode: argv.mode,
     devServer: {
       static: dist,
+      historyApiFallback: {
+        rewrites: [
+          { from: /^\/$/, to: path.join(dist, '/index.html') },
+        ],
+      }
     },
     plugins: [
       new HtmlWebpackPlugin({

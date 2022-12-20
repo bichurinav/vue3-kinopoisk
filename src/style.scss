@@ -5,10 +5,10 @@
 
 // Update Bulma's global variables
 $family-sans-serif: 'Nunito', sans-serif;
-$grey-dark: #1e1e1e;
+$grey-dark: #1c1c1c;
 $grey-light: #eff0eb;
 $primary: tomato;
-$link: #fa7c91;
+$link: tomato;
 $widescreen-enabled: false;
 $fullhd-enabled: false;
 
@@ -17,6 +17,10 @@ $body-background-color: #eff0eb;
 $control-border-width: 2px;
 $input-border-color: transparent;
 $input-shadow: none;
+
+
+// Import Fonts-Awesome
+@import 'assets/font-awesome/scss/font-awesome.scss';
 
 // Import only what you need from Bulma
 @import '~bulma/sass/utilities/_all.sass';
@@ -28,3 +32,35 @@ $input-shadow: none;
 @import '~bulma/sass/components/navbar.sass';
 @import '~bulma/sass/layout/hero.sass';
 @import '~bulma/sass/layout/section.sass';
+
+.input:focus,
+.textarea:focus,
+.select select:focus,
+.is-focused.input,
+.is-focused.textarea,
+.select select.is-focused,
+.input:active,
+.textarea:active,
+.select select:active,
+.is-active.input,
+.is-active.textarea,
+.select select.is-active {
+  border-color: transparent;
+}
+
+.control.has-icons-left
+.input:focus ~ .icon,
+.control.has-icons-left
+.select:focus ~ .icon,
+.control.has-icons-right .input:focus ~ .icon,
+.control.has-icons-right .select:focus ~ .icon {
+  color: $primary;
+}
+
+.input::placeholder {
+  color: #a9a9a9;
+}
+
+.control.has-icons-left .icon {
+  color: #a9a9a9;
+}
