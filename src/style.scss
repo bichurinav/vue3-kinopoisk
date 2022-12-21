@@ -18,6 +18,20 @@ $control-border-width: 2px;
 $input-border-color: transparent;
 $input-shadow: none;
 
+.theme-color {
+  color: tomato;
+}
+
+.films {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+    .film {
+      margin-bottom: 10px;
+    }
+  }
+}
 
 // Import Fonts-Awesome
 @import 'assets/font-awesome/scss/font-awesome.scss';

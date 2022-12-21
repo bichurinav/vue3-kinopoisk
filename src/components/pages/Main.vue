@@ -1,16 +1,10 @@
 <template>
   <Loader v-if="loadingSearchFilms && isFilmsFinded !== false"/>
   <div class="main" v-if="isFilmsFinded === false">
-    <section class="hero is-dark">
-      <div class="hero-body">
-        <p class="subtitle">
-          По вашему результату ничего не найдено ;(
-        </p>
-      </div>
-    </section>
+    <Plug text="По вашему результату ничего не найдено ;(" />
   </div>
   <div v-else-if="films.length === 0 && loadingSearchFilms === false && isFilmsFinded !== false" class="main">
-    <Banner @passageToFilm="passageToFilm" :loading="loadingTopFilm" :film="topFilm" />
+    <Banner @addFavorite="AddFavoriteFilm" @passageToFilm="passageToFilm" :loading="loadingTopFilm" :film="topFilm" />
     <section class="info">
       <div class="info__inner">
         <p class="subtitle">О сайте</p>
@@ -22,11 +16,7 @@
     </section>
   </div>
   <div v-else-if="loadingSearchFilms === false && films.length > 0" class="main">
-    <section class="films-search">
-      <div v-for="item in films">
-        <h3>{{item['nameRu']}}</h3>
-      </div>
-    </section>
+    <FoundFilms :films="films" />
   </div>
 </template>
 
@@ -44,19 +34,22 @@
 <script>
 import Banner from '@/components/Banner.vue';
 import Loader from '@/components/Loader.vue';
+import Plug from '@/components/Plug.vue';
+import FoundFilms from '@/components/FoundFilms.vue';
 import { ref, inject, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { getRandomInt } from "@/utils.js";
 
 export default {
-  components: { Banner, Loader },
+  components: { Banner, Loader, Plug, FoundFilms },
   setup(props, {emit}) {
     const topFilm = ref({});
     const loadingTopFilm = ref(true);
     const films = inject('films', []);
     const loadingSearchFilms = inject('loadingSearchFilms', false);
     const isFilmsFinded = inject('isFilmsFinded', 'off-flag');
+    const store = inject('store');
     const router = useRouter();
 
     const fetchTopFilms = async () => {
@@ -82,8 +75,12 @@ export default {
       }
     }
 
-    const actionBanner = () => {
-
+    const AddFavoriteFilm = (film) => {
+      const status = store.value.addFilm(film.value);
+      if (status === false) {
+        const name = film.value['nameRu'] || film.value['nameEn'] || film.value['originalName']
+        alert(`Фильм: ${name} уже добавлен в избранное!`)
+      }
     }
 
     const passageToFilm = (id) => {
@@ -99,6 +96,7 @@ export default {
       loadingTopFilm,
       loadingSearchFilms,
       passageToFilm,
+      AddFavoriteFilm,
       isFilmsFinded,
       films
     }

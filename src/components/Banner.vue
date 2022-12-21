@@ -89,8 +89,8 @@ import { ref, toRefs, watch } from 'vue';
       const filmId = ref('');
       const { loading, film } = toRefs(props);
 
-      const addFavorite = (event) => {
-        console.log(event.target)
+      const addFavorite = () => {
+        emit('addFavorite', film)
       }
 
       const passageToFilm = () => {

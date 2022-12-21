@@ -13,7 +13,7 @@
       <p class="title">{{ film['nameRu'] || film['nameEn'] || film['nameOriginal'] }}</p>
       <div class="subtitle">
         <p>Рейтинг кинопоиска: <b class="card-film__rating">{{ film['ratingKinopoisk'] || '-' }}</b></p>
-        <p>Дата выхода: {{ film['year'] }}</p>
+        <p>Дата выхода: {{ film['year'] || '-' }}</p>
       </div>
       <Tags :genres="film['genres']"/>
       <div class="content">

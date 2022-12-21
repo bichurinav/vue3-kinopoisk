@@ -28,12 +28,17 @@
   import Header from '@/components/Header.vue';
   import { ref, provide } from 'vue';
   import { RouterView } from 'vue-router';
+  import storeFavorite from '@/storeFavorite.js';
+
+  const store = storeFavorite();
+
   export default {
     components: { Header, RouterView },
     setup() {
       const films = ref([]);
       const loadingSearchFilms = ref(false);
       const isFilmsFinded = ref('off-flag');
+      const gg = ref(store());
 
       const getFilms = (arrayFilms) => {
         if (arrayFilms.length === 0) {
@@ -52,6 +57,7 @@
       }
 
       provide('films', films);
+      provide('store', gg);
       provide('loadingSearchFilms', loadingSearchFilms);
       provide('isFilmsFinded', isFilmsFinded);
 
