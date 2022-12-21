@@ -9,17 +9,15 @@
 
 <script>
 import FilmItem from "@/components/FilmItem.vue";
-import storeFavorite from "@/storeFavorite";
-import { onMounted, ref } from "vue";
-
-const store = storeFavorite();
+import { onMounted, ref, inject } from "vue";
 
 export default {
   components: { FilmItem },
   setup() {
     let films = ref([]);
+    const store = inject('store');
     onMounted(() => {
-      films.value = store().getFilms();
+      films.value = store.value.getFilms();
     })
     return {
       films

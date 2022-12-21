@@ -38,7 +38,7 @@
       const films = ref([]);
       const loadingSearchFilms = ref(false);
       const isFilmsFinded = ref('off-flag');
-      const gg = ref(store());
+      const storeFavorite = ref(store);
 
       const getFilms = (arrayFilms) => {
         if (arrayFilms.length === 0) {
@@ -57,7 +57,7 @@
       }
 
       provide('films', films);
-      provide('store', gg);
+      provide('store', storeFavorite);
       provide('loadingSearchFilms', loadingSearchFilms);
       provide('isFilmsFinded', isFilmsFinded);
 
