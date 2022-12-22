@@ -24,4 +24,9 @@ function debounce(func, wait, immediate) {
     };
 }
 
-export { getRandomInt, debounce }
+function isNumeric(str) {
+    if (typeof str != "string") return false
+    return !isNaN(str) && !isNaN(parseFloat(str))
+}
+
+export { getRandomInt, debounce, isNumeric }

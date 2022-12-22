@@ -1,11 +1,10 @@
-import { Main, Favorite, Film } from '@/components/pages';
+import { Main, Favorite, Film, NotFound } from '@/components/pages';
 import { createRouter, createWebHistory } from 'vue-router';
 
 const routes = [
     {
         path: '/',
         component: Main,
-        props: true,
     },
     {
         path: '/favorite',
@@ -14,6 +13,10 @@ const routes = [
     {
         path: '/film/:id',
         component: Film
+    },
+    {
+        path: '/:catchAll(.*)',
+        component: NotFound
     }
 ]
 

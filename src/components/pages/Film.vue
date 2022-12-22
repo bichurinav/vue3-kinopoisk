@@ -1,5 +1,6 @@
 <template>
   <Loader v-if="loading" />
+  <NotFound v-else-if="isNotFound && !loading"/>
   <div v-else class="card card-film">
     <div class="card-image card-film__image card-film__item">
       <figure class="image">
@@ -66,41 +67,51 @@
 <script>
 import Tags from '@/components/Tags.vue';
 import Loader from '@/components/Loader.vue';
+import NotFound from '@/components/pages/NotFound.vue';
 import { useRoute } from 'vue-router';
 import { ref, onMounted, inject } from 'vue';
 import axios from 'axios';
 import { useAddFilmToFavorite } from "@/components/hooks";
+import { isNumeric } from '@/utils.js'
 
 export default {
-  components: { Tags, Loader },
+  components: { Tags, Loader, NotFound },
   props: {
     films: Array
   },
   setup() {
     const film = ref({});
     const loading = ref(true);
+    const isNotFound = ref(false);
+
     const fetchFilm = async () => {
       const route = useRoute();
       const { id } = route.params;
+
+      if (!isNumeric(id)) {
+        isNotFound.value = true;
+        loading.value = false;
+        return;
+      }
+
       try {
-        // Искусственная задержка
-        setTimeout(async () => {
-          const {data} = await axios.get(
-              `https://kinopoiskapiunofficial.tech/api/v2.2/films/${id}`,
-              {
-                headers: {
-                  'X-API-KEY': process.env.API_KEY,
-                  'Content-Type': 'application/json',
-                },
-              }
-          );
-          film.value = data;
-          loading.value = false;
-        }, 1000)
+        const { data } = await axios.get(
+            `https://kinopoiskapiunofficial.tech/api/v2.2/films/${id}`,
+            {
+              headers: {
+                'X-API-KEY': process.env.API_KEY,
+                'Content-Type': 'application/json',
+              },
+            }
+        );
+        film.value = data;
+        loading.value = false;
       } catch (e) {
-        console.error(e)
+        isNotFound.value = true;
+        loading.value = false;
       }
     }
+
     const storeF = inject('storeFavorite');
     const emitter = inject('emitter');
     const addFilmToFavorite = useAddFilmToFavorite(storeF, emitter);
@@ -112,6 +123,7 @@ export default {
     return {
       film,
       loading,
+      isNotFound,
       addFilmToFavorite
     }
   }
