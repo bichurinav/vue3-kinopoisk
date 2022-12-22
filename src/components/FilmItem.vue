@@ -6,13 +6,34 @@
       </div>
       <div class="film__content">
         <h3 class="film__name">{{ film['nameRu'] || film['nameEn'] || film['nameOriginal'] }}</h3>
-        <p class="film__rating">Рейтинг: <span class="theme-color">{{ film['rating'] || film['ratingKinopoisk'] || '-' }}</span></p>
+        <p class="film__rating">
+          Рейтинг: <span class="theme-color">{{ film['rating'] || film['ratingKinopoisk'] || '-' }}</span>
+        </p>
         <Tags :genres="film['genres']" />
       </div>
     </div>
-    <button @click.stop="addFilmToFavorite" class="film__btn-favorite" title="Добавить в избранное">
+    <button
+        v-if="!film['isFavorite']"
+        @click.stop="addFilmToFavorite(film)"
+        class="film__btn-favorite"
+        title="Добавить в избранное"
+    >
       <img src="@/assets/favorite.png" alt="favorite-icon">
     </button>
+    <div v-else class="film-buttons">
+      <button
+          @click.stop="markFilmWatched"
+          class="film__btn-watched"
+          :class="film['isWatched'] ? 'watched' : ''"
+          :title="film['isWatched'] ? 'Фильм просмотрен' : 'Отметить фильм просмотренным'"
+      >
+        <i class="fa fa-binoculars" aria-hidden="true"></i>
+      </button>
+      <button @click.stop="delFilmFromFavorite" class="film__btn-del" title="Удалить из избранного">
+        <i class="fa fa-trash theme-color" aria-hidden="true"></i>
+      </button>
+    </div>
+
   </div>
 </template>
 
@@ -33,6 +54,30 @@
         }
       }
     }
+    &-buttons {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      button {
+        cursor: pointer;
+        border: none;
+        margin-bottom: 5px;
+        border-radius: 5px;
+        font-size: 18px;
+        &:hover {
+          transform: scale(1.1);
+        }
+      }
+      .watched {
+        color: #7dcb31;
+      }
+    }
+    &__btn-watched {
+      color: silver;
+    }
     &__inner {
       min-height: 100%;
       min-width: 100%;
@@ -47,6 +92,7 @@
     }
     &__btn-favorite {
       position: absolute;
+      cursor: pointer;
       background: transparent;
       right: 10px;
       border: solid 1px #eaeaea;
@@ -56,7 +102,6 @@
       transform: translateY(-50%);
       :hover {
         opacity: .6;
-        cursor: pointer;
       }
     }
     &__name {
@@ -86,6 +131,7 @@
 import Tags from '@/components/Tags.vue'
 import { useRouter } from "vue-router";
 import { inject } from "vue";
+import { useAddFilmToFavorite, useGetFilmId } from "@/components/hooks";
 
 export default {
   props: {
@@ -95,23 +141,31 @@ export default {
   setup(props) {
     const router = useRouter();
     const store = inject('store');
-
+    const emitter = inject('emitter');
+    const addFilmToFavorite = useAddFilmToFavorite(store, emitter);
+    const getFilmId = useGetFilmId();
 
     const passageToFilm = () => {
-      router.push(`/film/${props.film['kinopoiskId']}`)
+      router.push(`/film/${getFilmId(props.film)}`)
     }
 
-    const addFilmToFavorite = () => {
-      const status = store.value.addFilm(props.film);
-      if (status === false) {
-        const name = props.film['nameRu'] || props.film['nameEn'] || props.film['originalName']
-        alert(`Фильм: ${name} уже добавлен в избранное!`)
-      }
+    const delFilmFromFavorite = () => {
+      const id = getFilmId(props.film)
+      store.value.delFilm(id);
+      router.go(0);
+    }
+
+    const markFilmWatched = () => {
+      const id = getFilmId(props.film)
+      store.value.markFilm(id);
+      router.go(0);
     }
 
     return {
       passageToFilm,
-      addFilmToFavorite
+      addFilmToFavorite,
+      delFilmFromFavorite,
+      markFilmWatched
     }
   }
 }

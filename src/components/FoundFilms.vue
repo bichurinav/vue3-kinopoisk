@@ -1,6 +1,6 @@
 <template>
   <section class="films-search films">
-    <FilmItem v-for="item in films" :film="item" :key="item['kinopoiskId'] || item['filmId']" />
+    <FilmItem v-for="item in films" :film="item" :key="getFilmId(item)" />
   </section>
 </template>
 
@@ -9,15 +9,16 @@
 
 <script>
 import FilmItem from '@/components/FilmItem.vue'
-import { onMounted } from "vue";
+import { useGetFilmId } from "@/components/hooks";
 
 export default {
   props: {
     films: Array
   },
   components: { FilmItem },
-  setup(props) {
-
+  setup() {
+    const getFilmId = useGetFilmId();
+    return { getFilmId }
   }
 }
 </script>

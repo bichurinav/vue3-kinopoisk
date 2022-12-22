@@ -5,7 +5,7 @@
       <figure class="image">
         <img :src="film['posterUrlPreview']" :alt="'poster-' + film['nameRu']">
       </figure>
-      <button class="card-film__btn-favorite" title="Добавить в избранное">
+      <button @click="addFilmToFavorite(film)" class="card-film__btn-favorite" title="Добавить в избранное">
         <img src="@/assets/favorite.png" alt="favorite-icon">
       </button>
     </div>
@@ -67,15 +67,16 @@
 import Tags from '@/components/Tags.vue';
 import Loader from '@/components/Loader.vue';
 import { useRoute } from 'vue-router';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, inject } from 'vue';
 import axios from 'axios';
+import { useAddFilmToFavorite } from "@/components/hooks";
 
 export default {
   components: { Tags, Loader },
   props: {
     films: Array
   },
-  setup(props) {
+  setup() {
     const film = ref({});
     const loading = ref(true);
     const fetchFilm = async () => {
@@ -88,19 +89,21 @@ export default {
               `https://kinopoiskapiunofficial.tech/api/v2.2/films/${id}`,
               {
                 headers: {
-                  'X-API-KEY': 'e65c87e8-7774-44e1-b959-03939022b580',
+                  'X-API-KEY': process.env.API_KEY,
                   'Content-Type': 'application/json',
                 },
               }
           );
           film.value = data;
           loading.value = false;
-          console.log(data)
         }, 1000)
       } catch (e) {
         console.error(e)
       }
     }
+    const store = inject('store');
+    const emitter = inject('emitter');
+    const addFilmToFavorite = useAddFilmToFavorite(store, emitter);
 
     onMounted(() => {
       fetchFilm()
@@ -108,7 +111,8 @@ export default {
 
     return {
       film,
-      loading
+      loading,
+      addFilmToFavorite
     }
   }
 }

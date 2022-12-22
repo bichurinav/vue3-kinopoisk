@@ -9,7 +9,7 @@
         <div class="navbar-end">
           <div class="navbar-item">
             <RouterLink active-class="is-primary" class="navbar__favorite-button button is-light" to="/favorite">
-              <span>Избранное</span>
+              <span>Избранное <span class="counter theme-color">{{ counter }}</span></span>
               <img src="@/assets/favorite.png" alt="favorite-icon">
             </RouterLink>
           </div>
@@ -21,7 +21,7 @@
 
 <style lang="scss">
   .header {
-    background: #fafafa;
+    background: #fff;
     box-shadow: 0 1px 5px silver;
 
     &__navbar {
@@ -41,13 +41,14 @@
 <script>
 import Logo from '@/components/Logo.vue';
 import Search from '@/components/Search.vue';
-import { ref, watch } from 'vue';
+import { ref, watch, inject } from 'vue';
 import axios from 'axios';
 
 export default {
   components: { Logo, Search },
   setup(props, {emit}) {
     const search = ref('');
+    const counter = inject('counter');
     let loadingSearchFilms = false;
 
     watch(search, (value, prevValue) => {
@@ -56,13 +57,13 @@ export default {
 
           if (!value || value.length < 2) {
             emit('getFilmsByKeywords', [])
-            emit('isFilmsFinded', 'off-flag');
+            emit('isFilmsFound', 'off-flag');
             return
           }
 
           loadingSearchFilms = true;
           emit('loadingSearchFilms', loadingSearchFilms);
-          emit('isFilmsFinded', 'off-flag');
+          emit('isFilmsFound', 'off-flag');
 
           // Искусственная задержка
           setTimeout(async () => {
@@ -70,7 +71,7 @@ export default {
                 `https://kinopoiskapiunofficial.tech/api/v2.2/films/?keyword=${value}`,
                 {
                   headers: {
-                    'X-API-KEY': 'e65c87e8-7774-44e1-b959-03939022b580',
+                    'X-API-KEY': process.env.API_KEY,
                     'Content-Type': 'application/json',
                   },
                 }
@@ -80,13 +81,13 @@ export default {
             emit('loadingSearchFilms', loadingSearchFilms);
 
             if (data.items.length === 0) {
-              emit('isFilmsFinded', false)
+              emit('isFilmsFound', false)
               emit('getFilmsByKeywords', [])
               return
             }
 
             emit('getFilmsByKeywords', data.items)
-            emit('isFilmsFinded', 'off-flag')
+            emit('isFilmsFound', 'off-flag')
           }, 1000)
         } catch (e) {
           console.error(e)
@@ -94,7 +95,7 @@ export default {
       })()
     })
 
-    return { search }
+    return { search, counter }
   },
 }
 </script>

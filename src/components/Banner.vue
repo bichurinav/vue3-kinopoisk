@@ -15,7 +15,7 @@
           <p>Рейтинг: <b class="temp-text">temp-text</b></p>
           <p>Год: <b class="temp-text">temp-text</b></p>
         </div>
-        <button @click.stop="addFavorite" v-if="film['nameRu']" class="button is-primary">Добавить в избранное</button>
+        <button @click.stop="addFilmToFavorite(film)" v-if="film['nameRu']" class="button is-primary">Добавить в избранное</button>
       </div>
     </section>
 </template>
@@ -79,32 +79,28 @@
 </style>
 
 <script>
-import { ref, toRefs, watch } from 'vue';
+import { toRefs, inject, watch } from 'vue';
+import { useAddFilmToFavorite } from "@/components/hooks";
+
   export default {
     props: {
       film: Object,
       loading: Boolean
     },
     setup(props, {emit}) {
-      const filmId = ref('');
       const { loading, film } = toRefs(props);
-
-      const addFavorite = () => {
-        emit('addFavorite', film)
-      }
+      const store = inject('store');
+      const emitter = inject('emitter');
+      const addFilmToFavorite = useAddFilmToFavorite(store, emitter);
 
       const passageToFilm = () => {
         emit('passageToFilm', film.value['filmId'])
       }
 
-      watch(loading, (current, prev) => {
-        filmId.value = film.value['filmId'];
-      })
-
       return {
-        addFavorite,
+        addFilmToFavorite,
         passageToFilm,
-        filmId
+        loading
       }
     }
   }

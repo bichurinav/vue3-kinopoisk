@@ -1,3 +1,4 @@
 .code
 .idea
+.env
 node_modules

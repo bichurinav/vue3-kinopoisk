@@ -5,6 +5,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const { VueLoaderPlugin } = require('vue-loader');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const Dotenv = require('dotenv-webpack');
 
 function dirname() {
   return path.resolve();
@@ -48,6 +49,7 @@ module.exports = (env, argv) => {
         __VUE_OPTIONS_API__: IS_PRODUCTION ? false : true,
         __VUE_PROD_DEVTOOLS__: IS_PRODUCTION ? false : true,
       }),
+      new Dotenv()
     ],
     module: {
       rules: [

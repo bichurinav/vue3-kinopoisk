@@ -1,10 +1,10 @@
 <template>
-  <Loader v-if="loadingSearchFilms && isFilmsFinded !== false"/>
-  <div class="main" v-if="isFilmsFinded === false">
+  <Loader v-if="loadingSearchFilms && isFilmsFound !== false"/>
+  <div class="main" v-if="isFilmsFound === false">
     <Plug text="По вашему результату ничего не найдено ;(" />
   </div>
-  <div v-else-if="films.length === 0 && loadingSearchFilms === false && isFilmsFinded !== false" class="main">
-    <Banner @addFavorite="AddFavoriteFilm" @passageToFilm="passageToFilm" :loading="loadingTopFilm" :film="topFilm" />
+  <div v-else-if="films.length === 0 && loadingSearchFilms === false && isFilmsFound !== false" class="main">
+    <Banner @passageToFilm="passageToFilm" :loading="loadingTopFilm" :film="topFilm" />
     <section class="info">
       <div class="info__inner">
         <p class="subtitle">О сайте</p>
@@ -36,8 +36,8 @@ import Banner from '@/components/Banner.vue';
 import Loader from '@/components/Loader.vue';
 import Plug from '@/components/Plug.vue';
 import FoundFilms from '@/components/FoundFilms.vue';
-import { ref, inject, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import {inject, onMounted, ref} from 'vue';
+import {useRouter} from 'vue-router';
 import axios from 'axios';
 import { getRandomInt } from "@/utils.js";
 
@@ -48,8 +48,7 @@ export default {
     const loadingTopFilm = ref(true);
     const films = inject('films', []);
     const loadingSearchFilms = inject('loadingSearchFilms', false);
-    const isFilmsFinded = inject('isFilmsFinded', 'off-flag');
-    const store = inject('store');
+    const isFilmsFound = inject('isFilmsFound', 'off-flag');
     const router = useRouter();
 
     const fetchTopFilms = async () => {
@@ -60,26 +59,18 @@ export default {
               'https://kinopoiskapiunofficial.tech/api/v2.2/films/top',
               {
                 headers: {
-                  'X-API-KEY': 'e65c87e8-7774-44e1-b959-03939022b580',
+                  'X-API-KEY': process.env.API_KEY,
                   'Content-Type': 'application/json',
                 },
               }
           );
-          const randomTopFilm = data?.films[getRandomInt(0, data.films.length)];
-          topFilm.value = randomTopFilm;
-          loadingTopFilm.value = false;
-          console.log(topFilm)
+          if (data.films) {
+            topFilm.value = data.films[getRandomInt(0, data.films.length)];
+            loadingTopFilm.value = false;
+          }
         }, 1000)
       } catch (e) {
         console.error(e);
-      }
-    }
-
-    const AddFavoriteFilm = (film) => {
-      const status = store.value.addFilm(film.value);
-      if (status === false) {
-        const name = film.value['nameRu'] || film.value['nameEn'] || film.value['originalName']
-        alert(`Фильм: ${name} уже добавлен в избранное!`)
       }
     }
 
@@ -96,8 +87,7 @@ export default {
       loadingTopFilm,
       loadingSearchFilms,
       passageToFilm,
-      AddFavoriteFilm,
-      isFilmsFinded,
+      isFilmsFound,
       films
     }
   },

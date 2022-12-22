@@ -1,7 +1,7 @@
 <template>
   <div class="app">
     <Header
-      @isFilmsFinded="setStatusFilmsFinded"
+      @isFilmsFound="setStatusFilmsFound"
       @getFilmsByKeywords="getFilms"
       @loadingSearchFilms="getLoading"
     />
@@ -29,16 +29,23 @@
   import { ref, provide } from 'vue';
   import { RouterView } from 'vue-router';
   import storeFavorite from '@/storeFavorite.js';
+  import mitt from 'mitt';
 
   const store = storeFavorite();
+  const emitter = mitt();
 
   export default {
     components: { Header, RouterView },
     setup() {
       const films = ref([]);
       const loadingSearchFilms = ref(false);
-      const isFilmsFinded = ref('off-flag');
+      const favoriteCounterFilms = ref(store.getFilms().length);
+      const isFilmsFound = ref('off-flag');
       const storeFavorite = ref(store);
+
+      emitter.on('updateCounter', (val) => {
+        favoriteCounterFilms.value = val;
+      });
 
       const getFilms = (arrayFilms) => {
         if (arrayFilms.length === 0) {
@@ -48,8 +55,8 @@
         films.value = arrayFilms;
       }
 
-      const setStatusFilmsFinded = (status) => {
-        isFilmsFinded.value = status;
+      const setStatusFilmsFound = (status) => {
+        isFilmsFound.value = status;
       }
 
       const getLoading = (loading) => {
@@ -57,14 +64,16 @@
       }
 
       provide('films', films);
+      provide('emitter', emitter);
       provide('store', storeFavorite);
       provide('loadingSearchFilms', loadingSearchFilms);
-      provide('isFilmsFinded', isFilmsFinded);
+      provide('isFilmsFound', isFilmsFound);
+      provide('counter', favoriteCounterFilms);
 
       return {
         getFilms,
         getLoading,
-        setStatusFilmsFinded
+        setStatusFilmsFound
       }
     }
   }
