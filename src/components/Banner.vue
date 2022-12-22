@@ -89,9 +89,9 @@ import { useAddFilmToFavorite } from "@/components/hooks";
     },
     setup(props, {emit}) {
       const { loading, film } = toRefs(props);
-      const store = inject('store');
+      const storeF = inject('storeFavorite');
       const emitter = inject('emitter');
-      const addFilmToFavorite = useAddFilmToFavorite(store, emitter);
+      const addFilmToFavorite = useAddFilmToFavorite(storeF, emitter);
 
       const passageToFilm = () => {
         emit('passageToFilm', film.value['filmId'])

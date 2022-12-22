@@ -4,6 +4,7 @@
       @isFilmsFound="setStatusFilmsFound"
       @getFilmsByKeywords="getFilms"
       @loadingSearchFilms="getLoading"
+      @getTotalPages="getTotalPages"
     />
     <div class="container">
       <div class="container__inner">
@@ -29,9 +30,11 @@
   import { ref, provide } from 'vue';
   import { RouterView } from 'vue-router';
   import storeFavorite from '@/storeFavorite.js';
+  import storeSearchFilms from "@/storeSearchFilms.js";
   import mitt from 'mitt';
 
-  const store = storeFavorite();
+  const storeF = storeFavorite();
+  const storeS = storeSearchFilms();
   const emitter = mitt();
 
   export default {
@@ -39,13 +42,20 @@
     setup() {
       const films = ref([]);
       const loadingSearchFilms = ref(false);
-      const favoriteCounterFilms = ref(store.getFilms().length);
+      const favoriteCounterFilms = ref(storeF.getFilms().length);
       const isFilmsFound = ref('off-flag');
-      const storeFavorite = ref(store);
+      const page = ref(1)
+      const totalPages = ref(1);
+      const storeFavorite = ref(storeF);
+      const storeSearchFilms = ref(storeS);
 
       emitter.on('updateCounter', (val) => {
         favoriteCounterFilms.value = val;
       });
+
+      const getTotalPages = (val) => {
+        totalPages.value = val;
+      }
 
       const getFilms = (arrayFilms) => {
         if (arrayFilms.length === 0) {
@@ -63,9 +73,12 @@
         loadingSearchFilms.value = loading;
       }
 
+      provide('totalPages', totalPages);
+      provide('page', page);
       provide('films', films);
       provide('emitter', emitter);
-      provide('store', storeFavorite);
+      provide('storeFavorite', storeFavorite);
+      provide('storeSearchFilms', storeSearchFilms)
       provide('loadingSearchFilms', loadingSearchFilms);
       provide('isFilmsFound', isFilmsFound);
       provide('counter', favoriteCounterFilms);
@@ -73,7 +86,8 @@
       return {
         getFilms,
         getLoading,
-        setStatusFilmsFound
+        setStatusFilmsFound,
+        getTotalPages
       }
     }
   }

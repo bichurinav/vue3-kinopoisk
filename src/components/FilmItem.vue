@@ -140,9 +140,9 @@ export default {
   components: { Tags },
   setup(props) {
     const router = useRouter();
-    const store = inject('store');
+    const storeF = inject('storeFavorite');
     const emitter = inject('emitter');
-    const addFilmToFavorite = useAddFilmToFavorite(store, emitter);
+    const addFilmToFavorite = useAddFilmToFavorite(storeF, emitter);
     const getFilmId = useGetFilmId();
 
     const passageToFilm = () => {
@@ -151,13 +151,13 @@ export default {
 
     const delFilmFromFavorite = () => {
       const id = getFilmId(props.film)
-      store.value.delFilm(id);
+      storeF.value.delFilm(id);
       router.go(0);
     }
 
     const markFilmWatched = () => {
       const id = getFilmId(props.film)
-      store.value.markFilm(id);
+      storeF.value.markFilm(id);
       router.go(0);
     }
 

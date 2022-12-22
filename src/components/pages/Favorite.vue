@@ -37,9 +37,9 @@ import { onMounted, ref, inject, watch, computed } from "vue";
 export default {
   components: { FilmItem, Plug },
   setup() {
-    const store = inject('store');
+    const storeF = inject('storeFavorite');
     const films = ref([]);
-    const select = ref(store.value.getState().filter);
+    const select = ref(storeF.value.getState().filter);
     const genres = [
       'Триллер',
       'Драма',
@@ -52,11 +52,11 @@ export default {
     ];
 
     onMounted(() => {
-      films.value = store.value.getFilms();
+      films.value = storeF.value.getFilms();
     })
 
     watch(select, (val, prevVal) => {
-      store.value.saveFilter(val);
+      storeF.value.saveFilter(val);
     })
 
     const filteredFilms = computed(() => {

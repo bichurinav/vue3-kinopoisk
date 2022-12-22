@@ -101,9 +101,9 @@ export default {
         console.error(e)
       }
     }
-    const store = inject('store');
+    const storeF = inject('storeFavorite');
     const emitter = inject('emitter');
-    const addFilmToFavorite = useAddFilmToFavorite(store, emitter);
+    const addFilmToFavorite = useAddFilmToFavorite(storeF, emitter);
 
     onMounted(() => {
       fetchFilm()
