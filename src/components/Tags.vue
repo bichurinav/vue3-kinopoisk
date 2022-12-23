@@ -1,9 +1,13 @@
 <template>
   <div class="tags">
     <div class="tags__inner">
-         <span class="tags__item" v-for="item in genres">
-          {{item['genre']}}
-        </span>
+      <span
+        class="tags__item"
+        v-for="(item, idx) in genres"
+        :key="idx + item['genre']"
+      >
+        {{ item['genre'] }}
+      </span>
     </div>
   </div>
 </template>
@@ -29,7 +33,7 @@
 <script>
 export default {
   props: {
-    genres: Array
-  }
-}
+    genres: Array,
+  },
+};
 </script>
