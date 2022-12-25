@@ -5,8 +5,8 @@
 </template>
 
 <script>
-import Plug from "@/components/Plug.vue";
+import Plug from '@/components/Plug.vue';
 export default {
-  components: { Plug }
-}
+  components: { Plug },
+};
 </script>

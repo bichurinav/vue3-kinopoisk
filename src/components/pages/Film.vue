@@ -1,22 +1,34 @@
 <template>
   <Loader v-if="loading" />
-  <NotFound v-else-if="isNotFound && !loading"/>
+  <NotFound v-else-if="isNotFound && !loading" />
   <div v-else class="card card-film">
     <div class="card-image card-film__image card-film__item">
       <figure class="image">
-        <img :src="film['posterUrlPreview']" :alt="'poster-' + film['nameRu']">
+        <img
+          :src="film['posterUrlPreview']"
+          :alt="'poster-' + film['nameRu']"
+        />
       </figure>
-      <button @click="addFilmToFavorite(film)" class="card-film__btn-favorite" title="Добавить в избранное">
-        <img src="@/assets/favorite.png" alt="favorite-icon">
+      <button
+        @click="addFilmToFavorite(film)"
+        class="card-film__btn-favorite"
+        title="Добавить в избранное"
+      >
+        <img src="@/assets/favorite.png" alt="favorite-icon" />
       </button>
     </div>
     <div class="card-content card-film__content card-film__item">
-      <p class="title">{{ film['nameRu'] || film['nameEn'] || film['nameOriginal'] }}</p>
+      <p class="title">
+        {{ film['nameRu'] || film['nameEn'] || film['nameOriginal'] }}
+      </p>
       <div class="subtitle">
-        <p>Рейтинг кинопоиска: <b class="card-film__rating">{{ film['ratingKinopoisk'] || '-' }}</b></p>
+        <p>
+          Рейтинг кинопоиска:
+          <b class="card-film__rating">{{ film['ratingKinopoisk'] || '-' }}</b>
+        </p>
         <p>Дата выхода: {{ film['year'] || '-' }}</p>
       </div>
-      <Tags :genres="film['genres']"/>
+      <Tags :genres="film['genres']" />
       <div class="content">
         {{ film['description'] }}
       </div>
@@ -37,7 +49,7 @@
     width: 64px;
     right: -25px;
     top: -10px;
-    transition: all .3s;
+    transition: all 0.3s;
     &:hover {
       cursor: pointer;
       transform: rotate(-5deg) scale(0.8);
@@ -71,13 +83,13 @@ import NotFound from '@/components/pages/NotFound.vue';
 import { useRoute } from 'vue-router';
 import { ref, onMounted, inject } from 'vue';
 import axios from 'axios';
-import { useAddFilmToFavorite } from "@/components/hooks";
-import { isNumeric } from '@/utils.js'
+import { useAddFilmToFavorite } from '@/components/hooks';
+import { isNumeric } from '@/utils.js';
 
 export default {
   components: { Tags, Loader, NotFound },
   props: {
-    films: Array
+    films: Array,
   },
   setup() {
     const film = ref({});
@@ -96,13 +108,13 @@ export default {
 
       try {
         const { data } = await axios.get(
-            `https://kinopoiskapiunofficial.tech/api/v2.2/films/${id}`,
-            {
-              headers: {
-                'X-API-KEY': process.env.API_KEY,
-                'Content-Type': 'application/json',
-              },
-            }
+          `https://kinopoiskapiunofficial.tech/api/v2.2/films/${id}`,
+          {
+            headers: {
+              'X-API-KEY': process.env.API_KEY,
+              'Content-Type': 'application/json',
+            },
+          }
         );
         film.value = data;
         loading.value = false;
@@ -110,22 +122,22 @@ export default {
         isNotFound.value = true;
         loading.value = false;
       }
-    }
+    };
 
     const storeF = inject('storeFavorite');
     const emitter = inject('emitter');
     const addFilmToFavorite = useAddFilmToFavorite(storeF, emitter);
 
     onMounted(() => {
-      fetchFilm()
-    })
+      fetchFilm();
+    });
 
     return {
       film,
       loading,
       isNotFound,
-      addFilmToFavorite
-    }
-  }
-}
+      addFilmToFavorite,
+    };
+  },
+};
 </script>

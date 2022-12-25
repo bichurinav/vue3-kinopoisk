@@ -8,12 +8,22 @@
           <option value="Все фильмы">Все фильмы</option>
           <option value="Просмотренные">Просмотренные</option>
           <option value="Непросмотренные">Непросмотренные</option>
-          <option v-for="(genre, idx) in genres" :value="genre" :key="idx + Date.now()">{{ genre }}</option>
+          <option
+            v-for="(genre, idx) in genres"
+            :value="genre"
+            :key="idx + Date.now()"
+          >
+            {{ genre }}
+          </option>
         </select>
       </div>
     </div>
     <div class="favorite__films films">
-      <FilmItem v-for="item in filteredFilms" :film="item" :key="item['kinopoiskId'] || item['filmId']" />
+      <FilmItem
+        v-for="item in filteredFilms"
+        :film="item"
+        :key="item['kinopoiskId'] || item['filmId']"
+      />
     </div>
   </div>
   <div v-else class="favorite">
@@ -30,9 +40,9 @@
 </style>
 
 <script>
-import FilmItem from "@/components/FilmItem.vue";
-import Plug from '@/components/Plug.vue'
-import { onMounted, ref, inject, watch, computed } from "vue";
+import FilmItem from '@/components/FilmItem.vue';
+import Plug from '@/components/Plug.vue';
+import { onMounted, ref, inject, watch, computed } from 'vue';
 
 export default {
   components: { FilmItem, Plug },
@@ -48,16 +58,16 @@ export default {
       'Комедия',
       'Спорт',
       'Фантастика',
-      'Ужасы'
+      'Ужасы',
     ];
 
     onMounted(() => {
       films.value = storeF.value.getFilms();
-    })
+    });
 
     watch(select, (val, prevVal) => {
       storeF.value.saveFilter(val);
-    })
+    });
 
     const filteredFilms = computed(() => {
       return films.value.filter((film) => {
@@ -70,16 +80,18 @@ export default {
         if (select.value === 'Все фильмы') {
           return film;
         }
-        return film['genres'].find((el) => el.genre === select.value.toLowerCase());
-      })
-    })
+        return film['genres'].find(
+          (el) => el.genre === select.value.toLowerCase()
+        );
+      });
+    });
 
     return {
       films,
       genres,
       select,
-      filteredFilms
-    }
+      filteredFilms,
+    };
   },
-}
+};
 </script>

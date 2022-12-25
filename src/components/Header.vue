@@ -5,12 +5,17 @@
         <div class="navbar-brand">
           <Logo />
         </div>
-        <Search v-model="search" placeholder="Поиск фильма..."/>
+        <Search v-model="search" placeholder="Поиск фильма..." />
         <div class="navbar-end">
           <div class="navbar-item">
-            <RouterLink active-class="is-primary" class="navbar__favorite-button button is-light" to="/favorite">
-              <span>Избранное <span class="counter theme-color">{{ counter }}</span></span>
-              <img src="@/assets/favorite.png" alt="favorite-icon">
+            <RouterLink
+              active-class="is-primary"
+              class="navbar__favorite-button button is-light"
+              to="/favorite"
+            >
+              Избранное
+              <span class="counter theme-color">{{ counter }}</span>
+              <img src="@/assets/favorite.png" alt="favorite-icon" />
             </RouterLink>
           </div>
         </div>
@@ -20,22 +25,25 @@
 </template>
 
 <style lang="scss">
-  .header {
-    background: #fff;
-    box-shadow: 0 1px 5px silver;
+.header {
+  background: #fff;
+  box-shadow: 0 1px 5px silver;
 
-    &__navbar {
-      background: inherit;
+  &__navbar {
+    background: inherit;
+  }
+
+  .navbar {
+    &__favorite-button img {
+      width: 20px;
+      height: auto;
+      margin-left: 5px;
     }
-
-    .navbar {
-      &__favorite-button img {
-        width: 20px;
-        height: auto;
-        margin-left: 5px;
-      }
+    .counter {
+      padding-left: 5px;
     }
   }
+}
 </style>
 
 <script>
@@ -46,7 +54,7 @@ import axios from 'axios';
 
 export default {
   components: { Logo, Search },
-  setup(props, {emit}) {
+  setup(props, { emit }) {
     const search = ref('');
     const counter = inject('counter');
     let loadingSearchFilms = false;
@@ -57,11 +65,10 @@ export default {
 
     const getFetchSearchFilms = async (searchValue, type = '', page = 1) => {
       try {
-
         if (!searchValue || searchValue.length < 2) {
-          emit('getFilmsByKeywords', [])
+          emit('getFilmsByKeywords', []);
           emit('isFilmsFound', 'off-flag');
-          return
+          return;
         }
 
         if (type !== 'loadMore') {
@@ -76,17 +83,17 @@ export default {
 
         // Искусственная задержка
         setTimeout(async () => {
-          const {data} = await axios.get(
-              `https://kinopoiskapiunofficial.tech/api/v2.2/films/?keyword=${searchValue}&page=${page}`,
-              {
-                headers: {
-                  'X-API-KEY': process.env.API_KEY,
-                  'Content-Type': 'application/json',
-                },
-              }
+          const { data } = await axios.get(
+            `https://kinopoiskapiunofficial.tech/api/v2.2/films/?keyword=${searchValue}&page=${page}`,
+            {
+              headers: {
+                'X-API-KEY': process.env.API_KEY,
+                'Content-Type': 'application/json',
+              },
+            }
           );
 
-          emitter.emit('kek', 123123)
+          emitter.emit('kek', 123123);
 
           if (type !== 'loadMore') {
             loadingSearchFilms = false;
@@ -94,47 +101,47 @@ export default {
           }
 
           if (data.items.length === 0) {
-            emit('isFilmsFound', false)
-            emit('getFilmsByKeywords', [])
-            return
+            emit('isFilmsFound', false);
+            emit('getFilmsByKeywords', []);
+            return;
           }
 
           if (type === 'loadMore') {
             emitter.emit('loadingFilmsMore', false);
           }
 
-          storeS.value.addSearchFilms(data.items)
+          storeS.value.addSearchFilms(data.items);
 
           if (type !== 'loadMore') {
-            emit('getTotalPages', data.totalPages)
-            emit('isFilmsFound', 'off-flag')
+            emit('getTotalPages', data.totalPages);
+            emit('isFilmsFound', 'off-flag');
           }
 
-          emit('getFilmsByKeywords', storeS.value.getSearchFilms())
-        }, 1000)
+          emit('getFilmsByKeywords', storeS.value.getSearchFilms());
+        }, 1000);
       } catch (e) {
-        console.error(e)
+        console.error(e);
       }
-    }
+    };
 
     emitter.on('loadFoundFilmMore', () => {
       if (page.value === totalPages.value) {
-        return
+        return;
       }
       if (page.value < totalPages.value) {
         page.value += 1;
       }
       getFetchSearchFilms(search.value, 'loadMore', page.value);
-    })
+    });
 
     watch(search, (value, prevValue) => {
       page.value = 1;
       totalPages.value = 1;
       storeS.value.delSearchFilms();
       getFetchSearchFilms(value);
-    })
+    });
 
-    return { search, counter }
+    return { search, counter };
   },
-}
+};
 </script>

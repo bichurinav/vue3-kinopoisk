@@ -62,10 +62,8 @@ $input-shadow: none;
   border-color: transparent;
 }
 
-.control.has-icons-left
-.input:focus ~ .icon,
-.control.has-icons-left
-.select:focus ~ .icon,
+.control.has-icons-left .input:focus ~ .icon,
+.control.has-icons-left .select:focus ~ .icon,
 .control.has-icons-right .input:focus ~ .icon,
 .control.has-icons-right .select:focus ~ .icon {
   color: $primary;
